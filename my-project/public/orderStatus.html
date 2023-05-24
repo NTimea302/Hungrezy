@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hungrezy - Order Status</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .container {
+      margin: 20px auto;
+      text-align: center;
+    }
+
+    .status-heading {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .order-code-input {
+      padding: 5px;
+      margin-bottom: 10px;
+    }
+
+    .status-message {
+      margin-bottom: 20px;
+    }
+
+    .check-status-button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Hungrezy</h1>
+    <div class="status-heading">Order Status</div>
+    <form id="status-form">
+      <input type="text" id="order-code-input" class="order-code-input" placeholder="Enter your order code" required>
+      <button type="submit" class="check-status-button">Check Status</button>
+    </form>
+    <div class="status-message" id="status-message"></div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      $("#status-form").submit(function (e) {
+        e.preventDefault();
+        var orderCode = $("#order-code-input").val();
+        checkOrderStatus(orderCode);
+      });
+
+      function checkOrderStatus(orderCode) {
+        // Send an AJAX request to the server
+        $.ajax({
+          url: "http://localhost:3000/orders/" + orderCode, // Replace with the actual server-side script URL or API endpoint
+          method: "GET",
+          success: function (response) {
+            // Update the status message on the page
+            if (response) {
+              var statusMessage = "Order status: " + response.status;
+              $("#status-message").text(statusMessage);
+            } else {
+              $("#status-message").text("Order not found. Please check your order code.");
+            }
+          },
+          error: function () {
+            // Handle the error case
+            $("#status-message").text("An error occurred while checking the order status.");
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

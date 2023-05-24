@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hungrezy - Menu</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .menu-item {
+      margin-bottom: 10px;
+      padding: 10px;
+      background-color: #f2f2f2;
+      cursor: pointer;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .menu-item:hover {
+      background-color: #e0e0e0;
+    }
+    #menu-list {
+      margin-top: 20px;
+    }
+    .message {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .menu-info {
+      margin-top: 10px;
+      margin-left: 20px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Hungrezy</h1>
+    <h2>Menu</h2>
+    <div class="message">Choose your favorite Food!</div>
+    <div id="menu-list">
+    </div>
+  </div>
+
+  <script>
+    $(document).ready(function () {
+      var menuList = $("#menu-list");
+  
+      // Retrieve the idRestaurant value from the URL parameters
+      var urlParams = new URLSearchParams(window.location.search);
+      var idRestaurant = urlParams.get('idRestaurant');
+  
+      $.ajax({
+        url: "http://localhost:3000/menu/" + idRestaurant,
+        method: "GET",
+        dataType: "json",
+        success: function (menuItems) {
+          menuItems.forEach(function (item) {
+            var menuItemElement = $("<div>")
+              .addClass("menu-item")
+              .append($("<div>").text(item.Name_food).addClass("menu-item-name"))
+              .append($("<div>").text("Description: " + item.Description_food).addClass("menu-info"))
+              .append($("<div>").text("Price: $" + item.Price_food.toFixed(2)).addClass("menu-info"))
+              .click(function () {
+                // Store the selected restaurant and menu item in session storage
+                sessionStorage.setItem("selectedRestaurant", JSON.stringify(item.Restaurant));
+                sessionStorage.setItem("selectedMenuItem", JSON.stringify(item));
+  
+                // Redirect to the order.html page
+                window.location.href = "order.html";
+              });
+            menuList.append(menuItemElement);
+          });
+        },
+        error: function (xhr, status, error) {
+          console.error(error);
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

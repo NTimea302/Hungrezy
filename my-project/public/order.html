@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hungrezy - Order</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    .order-container {
+      margin: 20px;
+    }
+
+    .order-heading {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .order-label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .order-input {
+      width: 100%;
+      padding: 5px;
+      margin-bottom: 10px;
+    }
+
+    .order-button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Hungrezy</h1>
+    <div class="order-container">
+      <h2>Order Details</h2>
+      <div class="order-heading">Selected Restaurant: <span id="selected-restaurant"></span></div>
+      <div class="order-label">Name:</div>
+      <input type="text" id="name-input" class="order-input" placeholder="Enter your name">
+
+      <div class="order-label">Address:</div>
+      <input type="text" id="address-input" class="order-input" placeholder="Enter your address">
+
+      <div class="order-label">Distance (in km):</div>
+      <input type="number" id="distance-input" class="order-input" placeholder="Enter the distance">
+
+      <div class="order-heading">Order Summary:</div>
+      <div id="order-summary"></div>
+
+      <div id="total-amount"></div> <!-- Display the total amount here -->
+
+      <button id="place-order-btn" class="order-button">Place Order</button>
+    </div>
+  </div>
+
+  <script>
+    $(document).ready(function () {
+      var selectedMenuItem = JSON.parse(localStorage.getItem("selectedMenuItem"));
+  
+      var orderSummary = $("#order-summary");
+      var menuItemElement = $("<div>")
+        .append($("<div>").text("Item: " + selectedMenuItem.Name_food))
+        .append($("<div>").text("Price: $" + selectedMenuItem.Price_food.toFixed(2)));
+      orderSummary.append(menuItemElement);
+  
+      $("#distance-input").on("input", function () {
+        var distanceInput = parseFloat($(this).val());
+        var selectedRestaurant = JSON.parse(localStorage.getItem("selectedRestaurant"));
+        var extraDeliveryFee = selectedRestaurant.Extra_delivery;
+        var extraFee = extraDeliveryFee * distanceInput;
+        var totalAmount = selectedMenuItem.Price_food + extraFee;
+  
+        var totalAmountElement = $("#total-amount");
+        totalAmountElement.text("Total Amount: $" + totalAmount.toFixed(2));
+        totalAmountElement.show(); // Show the total amount element
+      });
+  
+      $("#place-order-btn").click(function () {
+        var nameInput = $("#name-input").val();
+        var addressInput = $("#address-input").val();
+        var distanceInput = parseFloat($("#distance-input").val());
+  
+        var orderDetails = {
+          name: nameInput,
+          address: addressInput,
+          selectedMenuItem: selectedMenuItem,
+          distance: distanceInput,
+          restaurant: selectedRestaurant
+        };
+  
+        var selectedRestaurant = JSON.parse(localStorage.getItem("selectedRestaurant"));
+        var extraDeliveryFee = selectedRestaurant.Extra_delivery;
+        var extraFee = extraDeliveryFee * distanceInput;
+        var totalAmount = selectedMenuItem.Price_food + extraFee;
+  
+        orderDetails.totalAmount = totalAmount;
+        sessionStorage.setItem("orderDetails", JSON.stringify(orderDetails));
+  
+        window.location.href = "orderInform.html";
+      });
+    });
+  </script>
+  
+</body>
+
+</html>

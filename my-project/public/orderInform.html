@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hungrezy - Order Confirmation</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .container {
+      margin: 20px auto;
+      text-align: center;
+    }
+
+    .order-heading {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .order-label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .order-value {
+      margin-bottom: 10px;
+    }
+
+    .order-code {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    .back-button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Hungrezy</h1>
+    <div class="order-heading">Order Confirmation</div>
+    <div class="order-label">Name:</div>
+    <div id="name"></div>
+    <div class="order-label">Address:</div>
+    <div id="address"></div>
+    <div class="order-label">Total Amount:</div>
+    <div id="total-amount"></div>
+    <div class="order-label">Restaurant:</div>
+    <div id="restaurant"></div>
+    <div class="order-label">Menu Item:</div>
+    <div id="menu-item"></div>
+    <div class="order-code">Order Code: <span id="order-code"></span></div>
+    <button class="back-button" onclick="redirectToOrderStatus()">Check Status by Code</button>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    // Retrieve the order details from session storage
+    var orderDetails = JSON.parse(sessionStorage.getItem("orderDetails"));
+
+    // Display the order information
+    document.getElementById("name").textContent = orderDetails.name;
+    document.getElementById("address").textContent = orderDetails.address;
+    document.getElementById("total-amount").textContent = "Total: $" + orderDetails.totalAmount.toFixed(2);
+
+// Fetch the restaurant details
+$.ajax({
+  url: "http://localhost:3000/restaurants/" + orderDetails.selectedMenuItem.Id_restaurant,
+  method: "GET",
+  dataType: "json",
+  success: function (restaurant) {
+    document.getElementById("restaurant").textContent = restaurant.Name;
+  },
+  error: function (xhr, status, error) {
+    console.error(error);
+  }
+});
+
+
+    document.getElementById("menu-item").textContent = orderDetails.selectedMenuItem.Name_food;
+
+    // Generate a random order code
+    var orderCode = generateOrderCode();
+    document.getElementById("order-code").textContent = orderCode;
+
+    // Save the order code to session storage for future reference
+    sessionStorage.setItem("orderCode", orderCode);
+
+    // Redirect to the orderStatus.html page
+    function redirectToOrderStatus() {
+      window.location.href = "orderStatus.html";
+    }
+
+    // Generate a random order code
+    function generateOrderCode() {
+      var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      var codeLength = 8;
+      var orderCode = "";
+      for (var i = 0; i < codeLength; i++) {
+        var randomIndex = Math.floor(Math.random() * characters.length);
+        orderCode += characters.charAt(randomIndex);
+      }
+      return orderCode;
+    }
+  </script>
+</body>
+
+</html>

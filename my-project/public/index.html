@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hungrezy - Restaurant Selection</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .restaurant {
+      margin-bottom: 10px;
+      padding: 10px;
+      background-color: #f2f2f2;
+      cursor: pointer;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .restaurant:hover {
+      background-color: #e0e0e0;
+    }
+    #restaurant-list {
+      margin-top: 20px;
+    }
+    .message {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .restaurant-info {
+      margin-top: 10px;
+      margin-left: 20px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Hungrezy</h1>
+    <h2>Restaurant Selection</h2>
+    <div class="message">Choose your favorite Restaurant!</div>
+    <div id="restaurant-list">
+    </div>
+  </div>
+
+  ...
+  <script>
+    $(document).ready(function() {
+      var restaurantList = $("#restaurant-list");
+  
+      $.ajax({
+        url: "http://localhost:3000/restaurants",
+        method: "GET",
+        dataType: "json",
+        success: function(restaurants) {
+          restaurants.forEach(function(restaurant) {
+            var restaurantElement = $("<div>")
+              .addClass("restaurant")
+              .append($("<div>").text(restaurant.Name).addClass("restaurant-name"))
+              .append($("<div>").text("Schedule: " + restaurant.Start_time.substring(11, 16) + " - " + restaurant.End_time.substring(11, 16)).addClass("restaurant-info"))
+              .append($("<div>").text("Minimum Order: $" + restaurant.Minimum_order).addClass("restaurant-info"))
+              .append($("<div>").text("Standard Delivery Maximum Distance: " + restaurant.Max_distance_delivery + "km").addClass("restaurant-info"))
+              .append($("<div>").text("Standard Delivery Price: $" + restaurant.Delivery_price).addClass("restaurant-info"))
+              .append($("<div>").text("Extra Delivery Fee: $" + restaurant.Extra_delivery + "/km").addClass("restaurant-info"))
+              .click(function() {
+                localStorage.setItem("selectedRestaurant", JSON.stringify(restaurant));
+  
+                // Extract the restaurant ID
+                var idRestaurant = restaurant.Id_restaurant;
+  
+                // Redirect to the menu.html page with the selected restaurant ID as a URL parameter
+                window.location.href = "menu.html?idRestaurant=" + idRestaurant;
+              });
+            restaurantList.append(restaurantElement);
+          });
+        },
+        error: function(xhr, status, error) {
+          console.error(error);
+        }
+      });
+    });
+  </script>
+  ...
+  
+</body>
+</html>
