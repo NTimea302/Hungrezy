@@ -1,0 +1,19 @@
+{
+  "name": "my-project",
+  "version": "1.0.0",
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "axios": "^0.23.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "msnodesqlv8": "^3.1.0",
+    "vue": "^3.2.31"
+  },
+  "description": "My Server Description",
+  "main": "server.js",
+  "author": "Your Name",
+  "license": "MIT"
+}
